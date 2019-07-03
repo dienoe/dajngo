@@ -1,6 +1,8 @@
 from django_redis import get_redis_connection
 from redis import RedisError
-from rest_framework import  serializers
+from rest_framework import serializers
+import logging
+logger=logging.getLogger('django')
 class ImageCodeCheckSerializer(serializers.Serializer):
     """图片验证码校验序列化器"""
     image_code_id = serializers.UUIDField()
@@ -18,10 +20,10 @@ class ImageCodeCheckSerializer(serializers.Serializer):
             raise serializers.ValidationError('图片验证码无效')
 
         # 删除图片验证码
-        # try:
-        #     redis_conn.delete('img_%s' % image_code_id)
-        # except RedisError as e:
-        #     logger.error(e)
+        try:
+            redis_conn.delete('img_%s' % image_code_id)
+        except RedisError as e:
+            logger.error(e)
 
         # 比较图片验证码
         real_image_code_text = real_image_code_text.decode()
