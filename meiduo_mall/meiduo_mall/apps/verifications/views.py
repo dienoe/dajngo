@@ -15,7 +15,7 @@ from django_redis import get_redis_connection
 # Create your views here.
 from verifications import constants
 from verifications.seriailzers import ImageCodeCheckSerializer
-from meiduo_mall.utils.yuntongxun.sms import CCP
+
 import logging
 logger=logging.getLogger('django')
 
@@ -29,6 +29,8 @@ class ImageCodeView(APIView):
         redis_conn=get_redis_connection('verify_codes')
         redis_conn.setex("img_%s" % image_code_id, constants.IMAGE_CODE_REDIS_EXPIRES, text)
         # 1/ 0
+        # import sys
+        # print(sys.path)
         # raise Exception('daw')
         # 返回图片
         return HttpResponse(image,content_type='image/jpg')
@@ -57,6 +59,7 @@ class SMSCodeView(GenericAPIView):
         # 让管道通知redis执行命令
         pl.execute()
         # 发送短信
+        from meiduo_mall.utils.yuntongxun.sms import CCP
         try:
             ccp=CCP()
             expires=constants.SMS_CODE_REDIS_EXPIRES//60
@@ -65,9 +68,11 @@ class SMSCodeView(GenericAPIView):
             logger.error("发送验证码短信[异常][ mobile: %s, message: %s ]" % (mobile, e))
             return Response({'message':'failed'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
+            print(result)
             if result == 0:
                 logger.info("发送验证码短信[正常][ mobile: %s ]" % mobile)
                 return Response({'message':'OK'})
             else:
                 logger.warning("发送验证码短信[失败][ mobile: %s ]" % mobile)
                 return Response({'message':'failed'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # return Response({'message':'OK'})
