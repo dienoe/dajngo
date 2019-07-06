@@ -2,6 +2,9 @@ from django.conf import settings
 import urllib.parse
 from urllib.request import urlopen
 import logging
+
+from itsdangerous import BadData
+
 logger=logging.getLogger('django')
 from .exceptions import OAuthQQAPIError
 import json
@@ -77,3 +80,12 @@ class OAuthQQ(object):
         serializer=TJWSSeralizer(settings.SECRET_KEY,constants.BIND_USER_ACCESS_TOKEN_EXPIRES )
         token=serializer.dumps({'openid':openid})
         return token.decode()
+    @staticmethod
+    def check_bind_user_access(access_token):
+        serializer=TJWSSeralizer(settings.SECRET_KEY,constants.BIND_USER_ACCESS_TOKEN_EXPIRES )
+        try:
+            data=serializer.loads(access_token)
+        except BadData:
+            return None
+        else:
+            return data['openid']

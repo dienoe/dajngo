@@ -44,14 +44,17 @@ class QQAuthUserView(CreateAPIView):
             access_token=oauth_qq.get_access_token(code)
             # 凭借access_token 获取openid
             openid = oauth_qq.get_openid(access_token)
+            # print(openid)
         except OAuthQQAPIError:
             return Response({'message':'访问qq接口异常'},status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         #根据openid查询上数据库OAuthQQUser 判断数据是否存在
         try:
             oauth_qq_user=OAuthQQUser.objects.get(openid=openid)
+            print(1)
         except OAuthQQUser.DoesNotExist:
             #如果数据不存在，处理poenid　并返回
+            print(2)
             access_token=oauth_qq.generate_bind_access_token(openid)
             return Response({'access_token':access_token})
         else:
@@ -59,6 +62,7 @@ class QQAuthUserView(CreateAPIView):
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
             jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
             user=oauth_qq_user.user
+            print(3)
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
             return Response({

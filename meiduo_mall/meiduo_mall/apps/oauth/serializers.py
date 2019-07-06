@@ -1,5 +1,10 @@
+from django_redis import get_redis_connection
 from rest_framework import serializers
+from rest_framework_jwt.settings import api_settings
+
 from users.models import User
+from .utils import OAuthQQ
+from .models import OAuthQQUser
 class QAuthQQUserSerializer(serializers.ModelSerializer):
     sms_code = serializers.CharField(label='短信验证码',write_only=True)
     access_token = serializers.CharField(label='操作凭证',write_only=True)
@@ -9,7 +14,7 @@ class QAuthQQUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=User
-        firlds=('mobile','password','sms_code','access_token','id','username','token')
+        fields=('mobile','password','sms_code','access_token','id','username','token')
         extra_kwargs={
             'username':{
               'read_only':True
@@ -24,14 +29,54 @@ class QAuthQQUserSerializer(serializers.ModelSerializer):
                 }
             }
         }
-        # 校验数据
-        def valiadte_access_token(self):
+    # 校验数据
+    def validate(self,attrs):
+        # 检验access_token
+        access_token = attrs['access_token']
+        openid = OAuthQQ.check_bind_user_access(access_token)
+        if not openid:
+            raise serializers.ValidationError('无效的access_token')
+
+        attrs['openid'] = openid
+
+        # 检验短信验证码
+        mobile = attrs['mobile']
+        sms_code = attrs['sms_code']
+        redis_conn = get_redis_connection('verify_codes')
+        real_sms_code = redis_conn.get('sms_%s' % mobile)
+        if real_sms_code.decode() != sms_code:
+            raise serializers.ValidationError('短信验证码错误')
+
+        # 如果用户存在，检查用户密码
+        try:
+            user = User.objects.get(mobile=mobile)
+        except User.DoesNotExist:
             pass
-        def validate(self,attrs):
-            return attrs
-        def create(self,validated_data):
-            pass
+        else:
+            password = attrs['password']
+            if not user.check_password(password):
+                raise serializers.ValidationError('密码错误')
+            attrs['user'] = user
+
+        return attrs
+    def create(self,validated_data):
+        openid=validated_data['openid']
+        user=validated_data.get('user')
+        mobile=validated_data['mobile']
+        password=validated_data['password']
         # 判断用户是否存在
-        # 如果存在，绑定　创建OAuthQQUser数据
-        # 如果不存在,先创建User,创建OAuthQQUser数据
+        if not user:
+            # 如果存在，绑定　创建OAuthQQUser数据
+            user=User.objects.create_user(username=mobile,mobile=mobile,password=password)
+
+        OAuthQQUser.objects.create(user=user,openid=openid)
+
+
         # 签发JWT_token
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+        user.token = token
+        return user
