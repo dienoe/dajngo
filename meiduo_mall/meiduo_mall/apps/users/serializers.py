@@ -101,7 +101,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class EmailSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        firlds=('id','email')
+        fields=('id','email')
     def update(self, instance, validated_data):
         """
 
@@ -111,10 +111,10 @@ class EmailSerializer(serializers.ModelSerializer):
         """
         email=validated_data['email']
         instance.email=email
-        instance.sacve()
+        instance.save()
         # /success_verify_email.html/token=
         # 生成激活链接
-        url=instance.generate_verify_url()
+        url=instance.generate_verify_email_url()
         # 发送激活邮件
         send_active_email.delay(email,url)
 
