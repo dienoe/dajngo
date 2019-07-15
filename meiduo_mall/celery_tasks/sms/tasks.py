@@ -1,10 +1,12 @@
 from .utils.yuntongxun.sms import CCP
 import logging
 from celery_tasks.main import celery_app
-logger=logging.getLogger('django')
+
+logger = logging.getLogger('django')
+
 
 @celery_app.task(name='send_sms_code')
-def send_sms_code(mobile,sms_code,expires,temp_id):
+def send_sms_code(mobile, sms_code, expires, temp_id):
     """发送短信验证码"""
     try:
         ccp = CCP()

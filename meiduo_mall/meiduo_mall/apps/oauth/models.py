@@ -1,8 +1,6 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from meiduo_mall.utils.models import BaseModel
+
 
 class OAuthQQUser(BaseModel):
     """

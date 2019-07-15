@@ -1,21 +1,19 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
 from django.db import models
-from itsdangerous import BadData
-from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer
+from django.contrib.auth.models import AbstractUser
+from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
 
-from meiduo_mall.utils.models import BaseModel
 from . import constants
+from meiduo_mall.utils.models import BaseModel
 # Create your models here.
+
+
 class User(AbstractUser):
     """用户模型类"""
-    default_address = models.ForeignKey('Address', related_name='users', null=True, blank=True,
-                                        on_delete=models.SET_NULL, verbose_name='默认地址')
     mobile = models.CharField(max_length=11, unique=True, verbose_name='手机号')
     email_active = models.BooleanField(default=False, verbose_name='邮箱验证状态')
+    default_address = models.ForeignKey('Address', related_name='users', null=True, blank=True,
+                                        on_delete=models.SET_NULL, verbose_name='默认地址')
 
     class Meta:
         db_table = 'tb_users'
@@ -29,8 +27,6 @@ class User(AbstractUser):
         serializer = TJWSSerializer(settings.SECRET_KEY, expires_in=constants.VERIFY_EMAIL_TOKEN_EXPIRES)
         data = {'user_id': self.id, 'email': self.email}
         token = serializer.dumps(data).decode()
-        # print('*'*50)
-        # print(token)
         verify_url = 'http://www.meiduo.site:8080/success_verify_email.html?token=' + token
         return verify_url
 
@@ -38,18 +34,20 @@ class User(AbstractUser):
     def check_verify_email_token(token):
         serializer = TJWSSerializer(settings.SECRET_KEY, expires_in=constants.VERIFY_EMAIL_TOKEN_EXPIRES)
         try:
-            data=serializer.loads(token)
+            data = serializer.loads(token)
         except BadData:
             return None
         else:
-            user_id=data['user_id']
-            email=data['email']
+            user_id = data['user_id']
+            email = data['email']
             try:
-                user=User.objects.get(id=user_id,email=email)
+                user = User.objects.get(id=user_id, email=email)
             except User.DoesNotExist:
                 return None
             else:
                 return user
+
+
 class Address(BaseModel):
     """
     用户地址
@@ -70,4 +68,20 @@ class Address(BaseModel):
         db_table = 'tb_address'
         verbose_name = '用户地址'
         verbose_name_plural = verbose_name
-        ordering = ['-update_time'] #指明默认排序
+        ordering = ['-update_time']  # 指明默认排序
+
+
+# address.province   对象        Address.objects.create(user=xxxx, province=对象)
+# address.province_id  对象id    Address.objects.create(province_id=对象id)
+
+
+
+
+
+
+
+
+
+
+
+

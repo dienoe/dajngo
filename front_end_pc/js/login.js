@@ -1,6 +1,3 @@
-/**
- * Created by python on 19-7-4.
- */
 var vm = new Vue({
     el: '#app',
     data: {
@@ -49,7 +46,6 @@ var vm = new Vue({
                         password: this.password
                     }, {
                         responseType: 'json',
-                        withCredentials: true
                     })
                     .then(response => {
                         // 使用浏览器本地存储保存token
@@ -95,7 +91,7 @@ var vm = new Vue({
                 })
                 .catch(error => {
                     console.log(error.response.data);
-            })
+                })
         }
     }
 });
