@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
   url(r'orders/settlement/$',views.OrderSettlementView.as_view()),
+  url(r'orders/$',views.SaveOrderSerializer.as_view()),
 ]
