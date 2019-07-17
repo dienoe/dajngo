@@ -52,14 +52,14 @@ class SaveOrderSerializer(serializers.ModelSerializer):
         :param validated_data:
         :return:
         """
+        # 获取用户对象 suer
+        user=self.context['request'].user
         # 生成订单编号 order_id
         # 20180702150101 9位用户id
         order_id=timezone.now().strftime('%Y%m%d%H%M%S')+('%09d'%user.id)
         address=validated_data['address']
         pay_method=validated_data['pay_method']
 
-        # 获取用户对象 suer
-        user=self.context['request'].user
         # 查询购物车 redis sku_id count selected
         redis_conn = get_redis_connection('cart')
         # hash 商品数量
@@ -99,7 +99,7 @@ class SaveOrderSerializer(serializers.ModelSerializer):
                 )
                 # 查询商品数据库 获取商品数据（库存）
                 sku_id_list = cart.keys()
-                sku_obj_list = SKU.objects0filter(id__in=sku_id_list)
+                sku_obj_list = SKU.objects.filter(id__in=sku_id_list)
                 # 遍历需要结算的商品数据
                 for sku in sku_obj_list:
                     # 用户需要购买的数量
@@ -136,7 +136,7 @@ class SaveOrderSerializer(serializers.ModelSerializer):
         # hash
         pl.hdel('cart_%s',user.id,*redis_cart_selected)
         # set
-        pl.hrem('cart_selected_%s'%user.od,*redis_cart_selected)
+        pl.srem('cart_selected_%s'%user.id,*redis_cart_selected)
         pl.execute()
         # 返回OrderInfo对象
         return order
