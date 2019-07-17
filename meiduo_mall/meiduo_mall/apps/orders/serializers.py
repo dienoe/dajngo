@@ -12,6 +12,8 @@ class CartSKUSerializer(serializers.ModelSerializer):
     class Meta:
         model = SKU
         fields = ('id', 'name', 'default_image_url', 'price', 'count')
+
+
 class OrderSettlementSerializer(serializers.Serializer):
     """
     订单结算数据序列化器
