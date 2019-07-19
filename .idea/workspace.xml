@@ -81,8 +81,8 @@
       <file leaf-file-name="dev.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/meiduo_mall/meiduo_mall/settings/dev.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="360" column="0" lean-forward="true" selection-start-line="360" selection-start-column="0" selection-end-line="360" selection-end-column="0" />
+            <state relative-caret-position="301">
+              <caret line="362" column="33" lean-forward="true" selection-start-line="362" selection-start-column="33" selection-end-line="362" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -910,7 +910,14 @@
       <option name="project" value="LOCAL" />
       <updated>1563455739830</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="后端xadmin实现">
+      <created>1563534215041</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1563534215041</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TodoView">
@@ -974,7 +981,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="celery异步发送短信定义实现" />
     <MESSAGE value="多账号登陆&#10;" />
     <MESSAGE value="qq登陆后端接口" />
     <MESSAGE value="qq登陆openid实现&#10;" />
@@ -999,7 +1005,8 @@
     <MESSAGE value="获取支付宝支付链接接口后端接口实现" />
     <MESSAGE value="获取支付宝链接前端" />
     <MESSAGE value="保存支付结果后端实现&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="保存支付结果后端实现&#10;" />
+    <MESSAGE value="后端xadmin实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="后端xadmin实现" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1514,8 +1521,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/meiduo_mall/meiduo_mall/settings/dev.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="360" column="0" lean-forward="true" selection-start-line="360" selection-start-column="0" selection-end-line="360" selection-end-column="0" />
+        <state relative-caret-position="301">
+          <caret line="362" column="33" lean-forward="true" selection-start-line="362" selection-start-column="33" selection-end-line="362" selection-end-column="33" />
           <folding />
         </state>
       </provider>
