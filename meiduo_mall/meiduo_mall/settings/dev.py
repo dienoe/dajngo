@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
     'haystack', #对接搜索引擎
     'ckeditor',  # 富文本编辑器
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
@@ -105,6 +108,14 @@ DATABASES = {
         'USER': 'meiduo',  # 数据库用户名
         'PASSWORD': 'meiduo',  # 数据库用户密码
         'NAME': 'meiduo'  # 数据库名字
+    },
+    'slave': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '192.168.20.139',
+        'PORT': 8306,
+        'USER': 'root',
+        'PASSWORD': 'mysql',
+        'NAME': 'meiduo'
     }
 }
 
@@ -353,7 +364,6 @@ ALIPAY_APPID = "2016101100660271"
 ALIPAY_URL = "	https://openapi.alipaydev.com/gateway.do"
 ALIPAY_DEBUG = True
 
-
-
-
+# 配置读写分离
+DATABASE_ROUTERS = ['meiduo_mall.utils.db_router.MasterSlaveDBRouter']
 
